@@ -6,41 +6,26 @@ CFLAGS = -Wall -g
 OSS_EXEC = oss
 USER_EXEC = user
 
-# Object files
-OSS_OBJ = oss.o
-USER_OBJ = user.o
-
-# Header files
-HEADERS = pcb.h clock.h message.h scheduler.h
-
-# Default target
+# Default target to build both executables
 all: $(OSS_EXEC) $(USER_EXEC)
 
-# Compile OSS
-$(OSS_EXEC): $(OSS_OBJ)
-	$(CC) $(CFLAGS) -o $(OSS_EXEC) $(OSS_OBJ)
+# Compile OSS executable
+$(OSS_EXEC): oss.c
+	$(CC) $(CFLAGS) -o $(OSS_EXEC) oss.c
 
-# Compile user process
-$(USER_EXEC): $(USER_OBJ)
-	$(CC) $(CFLAGS) -o $(USER_EXEC) $(USER_OBJ)
+# Compile user executable
+$(USER_EXEC): user.c
+	$(CC) $(CFLAGS) -o $(USER_EXEC) user.c
 
-# Compile OSS object
-oss.o: oss.c $(HEADERS)
-	$(CC) $(CFLAGS) -c oss.c
-
-# Compile user process object
-user.o: user.c $(HEADERS)
-	$(CC) $(CFLAGS) -c user.c
-
-# Clean up object files and executables
+# Clean up executables
 clean:
-	rm -f $(OSS_EXEC) $(USER_EXEC) *.o
+	rm -f $(OSS_EXEC) $(USER_EXEC)
 
 # Run OSS
 run: $(OSS_EXEC)
 	./$(OSS_EXEC)
 
-# Remove shared memory and message queue (replace SHMKEY and msgkey as needed)
+# Remove shared memory and message queue resources (replace SHMKEY if necessary)
 clean_ipc:
 	ipcrm -M 9876
-	ipcrm -Q $(msgkey)  # Ensure $(msgkey) is replaced with actual value if needed
+	ipcrm -Q $(msgkey)  # Replace $(msgkey) with the actual message queue ID if known
